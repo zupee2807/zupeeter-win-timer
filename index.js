@@ -43,15 +43,15 @@ if (x) {
     secondsUntilNextMinute
   );
   setTimeout(() => {
-    // allroutes.jobRunByCrone();
+    allroutes.jobRunByCrone();
     // allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
-    // allroutes.generatedTimeEveryAfterEveryOneMin(io);
+    allroutes.generatedTimeEveryAfterEveryOneMin(io);
 
     x = false;
   }, secondsUntilNextMinute * 1000);
 }
 
-// aviator_Start_function(io);
+aviator_Start_function(io);
 
 app.get("/", (req, res) => {
   res.status(200).json({
