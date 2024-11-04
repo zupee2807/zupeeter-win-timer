@@ -44,7 +44,6 @@ if (x) {
   );
   setTimeout(() => {
     allroutes.jobRunByCrone();
-    // allroutes.generatedTimeEveryAfterEveryOneMinTRX(io);
     allroutes.generatedTimeEveryAfterEveryOneMin(io);
 
     x = false;
@@ -52,6 +51,7 @@ if (x) {
 }
 
 aviator_Start_function(io);
+allroutes.rouletteResult(io);
 
 app.get("/", (req, res) => {
   res.status(200).json({
