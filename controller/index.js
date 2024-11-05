@@ -137,6 +137,7 @@ exports.rouletteResult = (io) => {
   function generatedTimeEveryAfterEveryOneMinForRollet() {
     let second = 59;
     let job = schedules.scheduleJob("* * * * * *", async function () {
+      console.log(second);
       io.emit("oneminrollet", second); // Emit the formatted time
       if (second === 5) {
         try {
@@ -147,6 +148,7 @@ exports.rouletteResult = (io) => {
       }
       if (second === 0) {
         second = 59;
+        console.log(resultToBeSend);
         io.emit("rolletresult", resultToBeSend);
         job?.cancel();
         job?.cancel();
@@ -167,7 +169,7 @@ exports.rouletteResult = (io) => {
         "CALL generate_result_of_roulette_game(@result_msg); SELECT @result_msg;";
       await queryDb(query_for_call_set_result)
         .then((result) => {
-          resultToBeSend = result?.[0]?.["@result_msg"];
+          resultToBeSend = result?.[1]?.[0]?.["@result_msg"];
         })
         .catch((e) => {
           console.log(e);
