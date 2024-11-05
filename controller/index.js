@@ -7,7 +7,7 @@ const {
 const moment = require("moment");
 const soment = require("moment-timezone");
 const { default: axios } = require("axios");
-let recurstionCount= 0;
+
 exports.generatedTimeEveryAfterEveryOneMin = (io) => {
   const job = schedule.schedule("* * * * * *", function () {
     const now = new Date();
@@ -56,48 +56,29 @@ exports.jobRunByCrone = async () => {
 
 async function callTronAPISecond(time_to_Tron, time) {
   await axios
-    // .get(
-    //   `https://apilist.tronscanapi.com/api/block`,
-    //   {
-    //     params: {
-    //       sort: "-balance",
-    //       start: "0",
-    //       limit: "20",
-    //       producer: "",
-    //       number: "",
-    //       start_timestamp: time_to_Tron,
-    //       end_timestamp: time_to_Tron,
-    //     },
-    //   },
-    //   {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // )
-    .post(
-      "https://api.bigdaddygame.cc/api/webapi/GetTRXNoaverageEmerdList",
+    .get(
+      `https://apilist.tronscanapi.com/api/block`,
       {
-        language: 0,
-        pageNo: 1,
-        pageSize: 10,
-        random: "b3916639d913484e814da988f6a8b95d",
-        signature: "7CD983B51ADD93DD24CCBFBE7A816410",
-        timestamp: 1729574397,
-        typeId: 13,
+        params: {
+          sort: "-balance",
+          start: "0",
+          limit: "20",
+          producer: "",
+          number: "",
+          start_timestamp: time_to_Tron,
+          end_timestamp: time_to_Tron,
+        },
       },
       {
         headers: {
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOiIxNzMwODA1MjMzIiwibmJmIjoiMTczMDgwNTIzMyIsImV4cCI6IjE3MzA4MDcwMzMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL2V4cGlyYXRpb24iOiIxMS81LzIwMjQgNToxMzo1MyBQTSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFjY2Vzc19Ub2tlbiIsIlVzZXJJZCI6IjEyNTE5NjE4IiwiVXNlck5hbWUiOiI5MTgyMTA0MzI2ODMiLCJVc2VyUGhvdG8iOiIxIiwiTmlja05hbWUiOiJNZW1iZXJOTkdQSFpLNyIsIkFtb3VudCI6IjAuMDAiLCJJbnRlZ3JhbCI6IjAiLCJMb2dpbk1hcmsiOiJINSIsIkxvZ2luVGltZSI6IjExLzUvMjAyNCA0OjQzOjUzIFBNIiwiTG9naW5JUEFkZHJlc3MiOiIxMjQuMTIzLjc4LjEyMyIsIkRiTnVtYmVyIjoiMCIsIklzdmFsaWRhdG9yIjoiMCIsIktleUNvZGUiOiI2OCIsIlRva2VuVHlwZSI6IkFjY2Vzc19Ub2tlbiIsIlBob25lVHlwZSI6IjEiLCJVc2VyVHlwZSI6IjAiLCJVc2VyTmFtZTIiOiIiLCJpc3MiOiJqd3RJc3N1ZXIiLCJhdWQiOiJsb3R0ZXJ5VGlja2V0In0._g94PZRJbcqIhaLo_nHiB9mtWnFSHnM4iWZke-xaxVE",
+          "Content-Type": "application/json",
         },
       }
     )
     .then((result) => {
-      if (result?.data?.data?.data?.gameslist?.[0]) {
+      if (result?.data?.data?.[0]) {
         recurstionCount = 0;
-        const obj = result?.data?.data?.data?.gameslist?.[0];
-        // const obj = result?.data?.data?.[0];
+        const obj = result?.data?.data?.[0];
         sendOneMinResultToDatabase(time, obj, time_to_Tron);
       } else {
         console.log("recursion called", time_to_Tron);
@@ -126,7 +107,7 @@ async function callTronAPISecond(time_to_Tron, time) {
     });
 }
 const sendOneMinResultToDatabase = async (time, obj, updatedTimestamp) => {
-  const newString = obj.blockID;
+  const newString = obj.hash;
   let num = null;
   for (let i = newString.length - 1; i >= 0; i--) {
     if (!isNaN(parseInt(newString[i]))) {
@@ -139,10 +120,10 @@ const sendOneMinResultToDatabase = async (time, obj, updatedTimestamp) => {
     num,
     String(moment(time).format("HH:mm:ss")),
     1,
-    `**${obj.blockID.slice(-4)}`,
+    `**${obj.hash.slice(-4)}`,
     JSON.stringify({ ...obj, updatedTimestamp: updatedTimestamp }),
-    `${obj.blockID.slice(-5)}`,
-    obj.blockNumber,
+    `${obj.hash.slice(-5)}`,
+    obj.number,
   ])
     .then((result) => {})
     .catch((e) => {
@@ -156,6 +137,7 @@ exports.rouletteResult = (io) => {
   function generatedTimeEveryAfterEveryOneMinForRollet() {
     let second = 59;
     let job = schedules.scheduleJob("* * * * * *", async function () {
+      console.log(second);
       io.emit("oneminrollet", second); // Emit the formatted time
       if (second === 5) {
         try {
@@ -166,6 +148,7 @@ exports.rouletteResult = (io) => {
       }
       if (second === 0) {
         second = 59;
+        console.log(resultToBeSend);
         io.emit("rolletresult", resultToBeSend);
         job?.cancel();
         job?.cancel();
