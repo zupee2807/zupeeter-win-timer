@@ -1,5 +1,13 @@
 const express = require("express");
-const { betPlacedAviator, getGameHistoryAviator, getLederData, getWalletByUserId, getMyHistoryByID, getTopRecordsAviator, cashOutFunction } = require("../controller/aviator_Start_function");
+const {
+  betPlacedAviator,
+  getGameHistoryAviator,
+  getLederData,
+  getWalletByUserId,
+  getMyHistoryByID,
+  getTopRecordsAviator,
+  cashOutFunction,
+} = require("../controller/aviator_Start_function");
 const router = express.Router();
 
 router.post("/apply-bet-aviator-first", betPlacedAviator);
