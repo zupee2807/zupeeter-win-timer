@@ -15,10 +15,7 @@ exports.generatedTimeEveryAfterEveryOneMin = (io) => {
 
     const currentMinute = nowIST.minutes();
     const currentSecond = nowIST.seconds();
-    // const timeToSend =
-    //   currentTime.getSeconds() > 0
-    //     ? 60 - currentTime.getSeconds()
-    //     : currentTime.getSeconds();
+    console.log(currentMinute, currentSecond);
     io.emit("onemin", `${currentMinute}_${currentSecond}`);
   });
 };
@@ -34,7 +31,7 @@ exports.generatedTimeEveryAfterEveryOneMinTRX = (io) => {
   });
 };
 exports.jobRunByCrone = async () => {
-  schedule.schedule("54 * * * * *", async function () {
+  schedule.schedule("51 * * * * *", async function () {
     // let timetosend = new Date();
     // timetosend.setSeconds(54);
     // timetosend.setMilliseconds(0);
@@ -121,7 +118,11 @@ const sendOneMinResultToDatabase = async (time, obj, updatedTimestamp) => {
     String(moment(time).format("HH:mm:ss")),
     1,
     `**${obj.hash.slice(-4)}`,
-    JSON.stringify({ ...obj, updatedTimestamp: updatedTimestamp }),
+    JSON.stringify({
+      ...obj,
+      updatedTimestamp: updatedTimestamp,
+      lateTimeStamp: moment(Date.now())?.format("HH:mm:ss"),
+    }),
     `${obj.hash.slice(-5)}`,
     obj.number,
   ])
