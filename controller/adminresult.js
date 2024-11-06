@@ -1,5 +1,60 @@
 const { queryDb } = require("../helper/adminHelper");
 
+exports.sendDisawarAmountToTheAdmin = async (io) => {
+  try {
+    const data = await queryDb(
+      "SELECT `number`,`amount` FROM `satta_bet_log_03`;",
+      []
+    );
+    io.emit("oneminsattadisawaramount", JSON.stringify(data || ""));
+  } catch (e) {
+    console.log(e);
+  }
+};
+exports.sendGaliAmountToTheAdmin = async (io) => {
+  try {
+    const data = await queryDb(
+      "SELECT `number`,`amount` FROM `satta_bet_log_02`;",
+      []
+    );
+    io.emit("oneminsattagaliamount", JSON.stringify(data || ""));
+  } catch (e) {
+    console.log(e);
+  }
+};
+exports.sendFaridabadAmountToTheAdmin = async (io) => {
+  try {
+    const data = await queryDb(
+      "SELECT `number`,`amount` FROM `satta_bet_log_01`;",
+      []
+    );
+    io.emit("oneminsattafaridabadamount", JSON.stringify(data || ""));
+  } catch (e) {
+    console.log(e);
+  }
+};
+exports.sendGaziyabadAmountToTheAdmin = async (io) => {
+  try {
+    const data = await queryDb(
+      "SELECT `number`,`amount` FROM `satta_bet_log`;",
+      []
+    );
+    io.emit("oneminsattagaziyabadamount", JSON.stringify(data || ""));
+  } catch (e) {
+    console.log(e);
+  }
+};
+exports.sendRouletteAmountToTheAdmin = async (io) => {
+  try {
+    const data = await queryDb(
+      "SELECT `number`,`amount` FROM `roulette_bet_log`;",
+      []
+    );
+    io.emit("oneminrouletteamount", JSON.stringify(data || ""));
+  } catch (e) {
+    console.log(e);
+  }
+};
 exports.sendWingoAmountToTheAdmin = async (io) => {
   try {
     const data = await queryDb(

@@ -16,6 +16,10 @@ const {
   sendWingoAmountToTheAdmin,
   sendWingoAmountToTheAdminThreeMin,
   sendWingoAmountToTheAdminFiveMin,
+  sendDisawarAmountToTheAdmin,
+  sendGaliAmountToTheAdmin,
+  sendFaridabadAmountToTheAdmin,
+  sendGaziyabadAmountToTheAdmin,
 } = require("./controller/adminresult");
 const io = new Server(httpServer, {
   cors: {
@@ -59,6 +63,13 @@ aviator_Start_function(io);
 allroutes.rouletteResult(io);
 
 setInterval(() => {
+  sendGaziyabadAmountToTheAdmin(io);
+  sendFaridabadAmountToTheAdmin(io);
+  sendGaliAmountToTheAdmin(io);
+  sendDisawarAmountToTheAdmin(io);
+}, 5 * 60 * 1000);
+
+setInterval(() => {
   sendWingoAmountToTheAdmin(io);
 }, 5000);
 setInterval(() => {
@@ -66,7 +77,7 @@ setInterval(() => {
 }, 10000);
 setInterval(() => {
   sendWingoAmountToTheAdminFiveMin(io);
-}, 1000);
+}, 15000);
 
 app.get("/", (req, res) => {
   res.status(200).json({
