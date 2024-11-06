@@ -15,7 +15,6 @@ exports.generatedTimeEveryAfterEveryOneMin = (io) => {
 
     const currentMinute = nowIST.minutes();
     const currentSecond = nowIST.seconds();
-    console.log(currentMinute, currentSecond);
     io.emit("onemin", `${currentMinute}_${currentSecond}`);
   });
 };
