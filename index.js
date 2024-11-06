@@ -20,6 +20,7 @@ const {
   sendGaliAmountToTheAdmin,
   sendFaridabadAmountToTheAdmin,
   sendGaziyabadAmountToTheAdmin,
+  sendRouletteAmountToTheAdmin,
 } = require("./controller/adminresult");
 const io = new Server(httpServer, {
   cors: {
@@ -69,6 +70,9 @@ setInterval(() => {
   sendDisawarAmountToTheAdmin(io);
 }, 5 * 60 * 1000);
 
+setInterval(() => {
+  sendRouletteAmountToTheAdmin(io);
+}, 5000);
 setInterval(() => {
   sendWingoAmountToTheAdmin(io);
 }, 5000);
