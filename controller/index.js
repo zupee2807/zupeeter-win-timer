@@ -137,7 +137,6 @@ exports.rouletteResult = (io) => {
   function generatedTimeEveryAfterEveryOneMinForRollet() {
     let second = 59;
     let job = schedules.scheduleJob("* * * * * *", async function () {
-      console.log(second);
       io.emit("oneminrollet", second); // Emit the formatted time
       if (second === 5) {
         try {
@@ -148,7 +147,6 @@ exports.rouletteResult = (io) => {
       }
       if (second === 0) {
         second = 59;
-        console.log(resultToBeSend);
         io.emit("rolletresult", resultToBeSend);
         job?.cancel();
         job?.cancel();

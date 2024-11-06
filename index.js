@@ -12,6 +12,11 @@ const allRoutes = require("./routes/Routes");
 const {
   aviator_Start_function,
 } = require("./controller/aviator_Start_function");
+const {
+  sendWingoAmountToTheAdmin,
+  sendWingoAmountToTheAdminThreeMin,
+  sendWingoAmountToTheAdminFiveMin,
+} = require("./controller/adminresult");
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
@@ -52,6 +57,16 @@ if (x) {
 
 aviator_Start_function(io);
 allroutes.rouletteResult(io);
+
+setInterval(() => {
+  sendWingoAmountToTheAdmin(io);
+}, 5000);
+setInterval(() => {
+  sendWingoAmountToTheAdminThreeMin(io);
+}, 10000);
+setInterval(() => {
+  sendWingoAmountToTheAdminFiveMin(io);
+}, 1000);
 
 app.get("/", (req, res) => {
   res.status(200).json({
