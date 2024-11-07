@@ -77,7 +77,7 @@ async function callTronAPISecond(time_to_Tron, time) {
         const obj = result?.data?.data?.[0];
         sendOneMinResultToDatabase(time, obj, time_to_Tron);
       } else {
-        console.log("recursion called", time_to_Tron,result?.data?.data);
+        console.log("recursion called", time_to_Tron, result?.data?.data);
         setTimeout(async () => {
           await callTronAPISecond(time_to_Tron, time);
         }, 1500);
