@@ -7,6 +7,7 @@ const {
 const moment = require("moment");
 const soment = require("moment-timezone");
 const { default: axios } = require("axios");
+const { TronWeb } = require("tronweb");
 
 exports.generatedTimeEveryAfterEveryOneMin = (io) => {
   const job = schedule.schedule("* * * * * *", function () {
@@ -39,21 +40,55 @@ exports.jobRunByCrone = async () => {
     const time = actualtome;
     // .add(5, "hours").add(30, "minutes").valueOf();
     const getTime = await queryDb(
-      "SELECT `utc_time` FROM `trx_UTC_timer` ORDER BY `id` DESC LIMIT 1;",
+      "SELECT `utc_time`,block_id FROM `trx_UTC_timer` ORDER BY `id` DESC LIMIT 1;",
       []
     );
     let time_to_Tron = getTime?.[0]?.utc_time;
     setTimeout(async () => {
-      await callTronAPISecond(time_to_Tron, time);
+      // await getBlockDetails(blockno);
+      // await callTronAPISecond(time_to_Tron, time);
+      await getBlockDetails(time, getTime?.[0]?.block_id, time_to_Tron);
       recurstionCount = 0;
     }, 4000);
   });
 };
+const tronWeb = new TronWeb({
+  fullHost: "https://api.trongrid.io", // Mainnet URL; for testnet use 'https://api.shasta.trongrid.io'
+});
 
+async function getBlockDetails(time, blockId, time_to_Tron) {
+  try {
+    let hash =
+      "0000000003faeeb56f27fc55d82a45a5e2a417c19e328c7745f2d48e167ff926";
+    const block = await tronWeb.trx.getBlock(blockId);
+    if (block?.blockID) {
+      let obj = {
+        hash: block?.blockID,
+        time:  String(moment(time).format("HH:mm:ss")),
+        time_to_Tron: time_to_Tron,
+        blockId: blockId,
+        number: blockId,
+      };
+      await sendOneMinResultToDatabase(time, obj, time_to_Tron);
+    } else {
+      let obj = {
+        thisisdummy: "this is dummy",
+        hash: hash,
+        time:  String(moment(time).format("HH:mm:ss")),
+        time_to_Tron: time_to_Tron,
+        blockId: blockId,
+        number: blockId,
+      };
+      await sendOneMinResultToDatabase(time, obj, time_to_Tron);
+    }
+  } catch (error) {
+    console.error("Error fetching block details:", error);
+  }
+}
 async function callTronAPISecond(time_to_Tron, time) {
   await axios
     .get(
-      `https://apilist.tronscanapi.com/api/block`,
+      `https://apilist.tronscan.org/api/block`,
       {
         params: {
           sort: "-balance",
@@ -72,6 +107,7 @@ async function callTronAPISecond(time_to_Tron, time) {
       }
     )
     .then((result) => {
+      console.log(result?.data?.data?.[0]);
       if (result?.data?.data?.[0]) {
         recurstionCount = 0;
         const obj = result?.data?.data?.[0];
