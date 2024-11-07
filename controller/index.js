@@ -32,22 +32,23 @@ exports.generatedTimeEveryAfterEveryOneMinTRX = (io) => {
 };
 exports.jobRunByCrone = async () => {
   schedule.schedule("54 * * * * *", async function () {
-    // let timetosend = new Date();
-    // timetosend.setSeconds(54);
-    // timetosend.setMilliseconds(0);
-    // let updatedTimestamp = parseInt(timetosend.getTime().toString());
     const actualtome = soment.tz("Asia/Kolkata");
     const time = actualtome;
     // .add(5, "hours").add(30, "minutes").valueOf();
     const getTime = await queryDb(
-      "SELECT `utc_time`,block_id FROM `trx_UTC_timer` ORDER BY `id` DESC LIMIT 1;",
+      "SELECT `utc_time`,block_id,created_at_utc FROM `trx_UTC_timer` ORDER BY `id` DESC LIMIT 1;",
       []
     );
     let time_to_Tron = getTime?.[0]?.utc_time;
     setTimeout(async () => {
-      // await getBlockDetails(blockno);
-      // await callTronAPISecond(time_to_Tron, time);
-      await getBlockDetails(time, getTime?.[0]?.block_id, time_to_Tron);
+      if (
+        Number(moment(getTime?.[0]?.created_at_utc)?.format("HH")) % 6 === 0 &&
+        Number(moment(getTime?.[0]?.created_at_utc)?.format("mm")) === 0
+      ) {
+        await callTronAPISecond(time_to_Tron, time);
+      } else {
+        await getBlockDetails(time, getTime?.[0]?.block_id, time_to_Tron);
+      }
       recurstionCount = 0;
     }, 4000);
   });
@@ -56,35 +57,6 @@ const tronWeb = new TronWeb({
   fullHost: "https://api.trongrid.io", // Mainnet URL; for testnet use 'https://api.shasta.trongrid.io'
 });
 
-async function getBlockDetails(time, blockId, time_to_Tron) {
-  try {
-    let hash =
-      "0000000003faeeb56f27fc55d82a45a5e2a417c19e328c7745f2d48e167ff926";
-    const block = await tronWeb.trx.getBlock(blockId);
-    if (block?.blockID) {
-      let obj = {
-        hash: block?.blockID,
-        time:  String(moment(time).format("HH:mm:ss")),
-        time_to_Tron: time_to_Tron,
-        blockId: blockId,
-        number: blockId,
-      };
-      await sendOneMinResultToDatabase(time, obj, time_to_Tron);
-    } else {
-      let obj = {
-        thisisdummy: "this is dummy",
-        hash: hash,
-        time:  String(moment(time).format("HH:mm:ss")),
-        time_to_Tron: time_to_Tron,
-        blockId: blockId,
-        number: blockId,
-      };
-      await sendOneMinResultToDatabase(time, obj, time_to_Tron);
-    }
-  } catch (error) {
-    console.error("Error fetching block details:", error);
-  }
-}
 async function callTronAPISecond(time_to_Tron, time) {
   await axios
     .get(
@@ -106,12 +78,17 @@ async function callTronAPISecond(time_to_Tron, time) {
         },
       }
     )
-    .then((result) => {
+    .then(async (result) => {
       console.log(result?.data?.data?.[0]);
       if (result?.data?.data?.[0]) {
         recurstionCount = 0;
         const obj = result?.data?.data?.[0];
-        sendOneMinResultToDatabase(time, obj, time_to_Tron);
+        // sendOneMinResultToDatabase(time, obj, time_to_Tron);
+        await getBlockDetails(time, obj?.number, time_to_Tron);
+        await queryDb(
+          "UPDATE `trx_UTC_timer` SET `block_id` = ? WHERE `utc_time` = ?;",
+          [String(obj?.number), String(time_to_Tron)]
+        );
       } else {
         console.log("recursion called", time_to_Tron, result?.data?.data);
         setTimeout(async () => {
@@ -138,9 +115,42 @@ async function callTronAPISecond(time_to_Tron, time) {
       }
     });
 }
+
+async function getBlockDetails(time, blockId, time_to_Tron) {
+  try {
+    let hash =
+      "0000000003faeeb56f27fc55d82a45a5e2a417c19e328c7745f2d48e167ff926";
+    const block = await tronWeb.trx.getBlock(Number(blockId));
+    if (block?.blockID) {
+      let obj = {
+        hash: block?.blockID,
+        time: String(moment(time).format("HH:mm:ss")),
+        time_to_Tron: time_to_Tron,
+        blockId: blockId,
+        number: blockId,
+      };
+      await sendOneMinResultToDatabase(time, obj, time_to_Tron);
+    } else {
+      let obj = {
+        thisisdummy: "this is dummy",
+        hash: hash,
+        time: String(moment(time).format("HH:mm:ss")),
+        time_to_Tron: time_to_Tron,
+        blockId: blockId,
+        number: blockId,
+      };
+      await sendOneMinResultToDatabase(time, obj, time_to_Tron);
+    }
+  } catch (error) {
+    console.error("Error fetching block details:", error);
+  }
+}
+
 const sendOneMinResultToDatabase = async (time, obj, updatedTimestamp) => {
   const newString = obj.hash;
   let num = null;
+  console.log(obj);
+  return;
   for (let i = newString.length - 1; i >= 0; i--) {
     if (!isNaN(parseInt(newString[i]))) {
       num = parseInt(newString[i]);
