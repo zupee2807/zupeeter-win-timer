@@ -79,7 +79,6 @@ async function callTronAPISecond(time_to_Tron, time) {
       }
     )
     .then(async (result) => {
-      console.log(result?.data?.data?.[0]);
       if (result?.data?.data?.[0]) {
         recurstionCount = 0;
         const obj = result?.data?.data?.[0];
@@ -149,8 +148,7 @@ async function getBlockDetails(time, blockId, time_to_Tron) {
 const sendOneMinResultToDatabase = async (time, obj, updatedTimestamp) => {
   const newString = obj.hash;
   let num = null;
-  console.log(obj);
-  return;
+
   for (let i = newString.length - 1; i >= 0; i--) {
     if (!isNaN(parseInt(newString[i]))) {
       num = parseInt(newString[i]);
