@@ -30,7 +30,7 @@ exports.generatedTimeEveryAfterEveryOneMinTRX = (io) => {
   });
 };
 exports.jobRunByCrone = async () => {
-  schedule.schedule("51 * * * * *", async function () {
+  schedule.schedule("54 * * * * *", async function () {
     // let timetosend = new Date();
     // timetosend.setSeconds(54);
     // timetosend.setMilliseconds(0);
@@ -46,7 +46,7 @@ exports.jobRunByCrone = async () => {
     setTimeout(async () => {
       await callTronAPISecond(time_to_Tron, time);
       recurstionCount = 0;
-    }, 7000);
+    }, 4000);
   });
 };
 
