@@ -525,7 +525,6 @@ exports.getWalletByUserId = async (req, res) => {
 exports.getMyHistoryByID = async (req, res) => {
   try {
     const { user_id_node } = req.body;
-    console.log("HII");
     if (!user_id_node)
       return res.status(400).json({
         msg: "Please provider user id",
