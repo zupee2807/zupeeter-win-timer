@@ -1,6 +1,7 @@
 "user strict";
 const { default: axios } = require("axios");
 var sql = require("../config/db.config");
+var sql5star = require("../config/db.config.5starxxx");
 // const path = require("path");
 const CryptoJS = require("crypto-js");
 
@@ -248,6 +249,17 @@ module.exports = {
   queryDb: function (query, param) {
     return new Promise((resolve, reject) => {
       sql.query(query, param, (err, result) => {
+        if (err) {
+          //return reject(err);
+          return console.log(err);
+        }
+        resolve(result);
+      });
+    });
+  },
+  queryDb5Star: function (query, param) {
+    return new Promise((resolve, reject) => {
+      sql5star.query(query, param, (err, result) => {
         if (err) {
           //return reject(err);
           return console.log(err);

@@ -22,6 +22,7 @@ const {
   sendGaziyabadAmountToTheAdmin,
   sendRouletteAmountToTheAdmin,
 } = require("./controller/adminresult");
+const { timeToSend, rouletteResult5Star } = require("./controller/5starxxxTimer");
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
@@ -55,7 +56,8 @@ if (x) {
   setTimeout(() => {
     allroutes.jobRunByCrone();
     allroutes.generatedTimeEveryAfterEveryOneMin(io);
-
+    rouletteResult5Star(io);
+    timeToSend(io);
     x = false;
   }, secondsUntilNextMinute * 1000);
 }
