@@ -3,6 +3,7 @@ const schedules = require("node-schedule");
 const {
   queryDb,
   functionToreturnDummyResult,
+  queryDb5Star,
 } = require("../helper/adminHelper");
 const moment = require("moment");
 const soment = require("moment-timezone");
@@ -177,7 +178,7 @@ const sendOneMinResultToDatabase = async (time, obj, updatedTimestamp) => {
 
 exports.rouletteResult = (io) => {
   let resultToBeSend = "";
-
+  let resultToBeSend_5Start = "";
   function generatedTimeEveryAfterEveryOneMinForRollet() {
     let second = 59;
     let job = schedules.scheduleJob("* * * * * *", async function () {
@@ -185,6 +186,7 @@ exports.rouletteResult = (io) => {
       if (second === 5) {
         try {
           callAPI();
+          callAPI5Star();
         } catch (e) {
           console.log(e);
         }
@@ -192,13 +194,14 @@ exports.rouletteResult = (io) => {
       if (second === 0) {
         second = 59;
         io.emit("rolletresult", resultToBeSend);
+        io.emit("rolletresult_5star", resultToBeSend_5Start);
         job?.cancel();
         job?.cancel();
         job?.cancel();
         job?.cancel();
         setTimeout(() => {
           generatedTimeEveryAfterEveryOneMinForRollet();
-        }, 10000);
+        }, 27000);
       } else {
         second--;
       }
@@ -212,6 +215,23 @@ exports.rouletteResult = (io) => {
       await queryDb(query_for_call_set_result)
         .then((result) => {
           resultToBeSend = result?.[1]?.[0]?.["@result_msg"];
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  async function callAPI5Star() {
+    try {
+      const query_for_call_set_result =
+        "CALL generate_result_of_roulette_game(@result_msg);";
+      await queryDb5Star(query_for_call_set_result, []);
+      const get_result_query = "SELECT @result_msg;";
+      await queryDb5Star(get_result_query)
+        .then((result) => {
+          resultToBeSend_5Start = result?.[0]?.["@result_msg"];
         })
         .catch((e) => {
           console.log(e);

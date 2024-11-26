@@ -2,18 +2,6 @@
 const schedule = require("node-schedule");
 const { queryDb5Star } = require("../helper/adminHelper");
 const soment = require("moment-timezone");
-
-exports.timeToSend = (io) => {
-  const job = schedule.scheduleJob("* * * * * *", function () {
-    const now = new Date();
-    const nowIST = soment(now).tz("Asia/Kolkata");
-
-    const currentMinute = nowIST.minutes();
-    const currentSecond = nowIST.seconds();
-    io.emit("seconds_5star", `${currentMinute}_${currentSecond}`);
-  });
-};
-
 exports.rouletteResult5Star = (io) => {
   let resultToBeSend = "";
 
