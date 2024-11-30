@@ -142,6 +142,7 @@ async function getBlockDetails(time, blockId, time_to_Tron) {
       await sendOneMinResultToDatabase(time, obj, time_to_Tron);
     }
   } catch (error) {
+    await callTronAPISecond(time_to_Tron, time);
     console.error("Error fetching block details:", error);
   }
 }
