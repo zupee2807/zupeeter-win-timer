@@ -202,7 +202,7 @@ exports.rouletteResult = (io) => {
         job?.cancel();
         setTimeout(() => {
           generatedTimeEveryAfterEveryOneMinForRollet();
-        }, 27000);
+        }, 29000);
       } else {
         second--;
       }
