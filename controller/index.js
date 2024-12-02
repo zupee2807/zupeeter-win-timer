@@ -41,11 +41,9 @@ exports.jobRunByCrone = async () => {
       []
     );
     let time_to_Tron = getTime?.[0]?.utc_time;
+    // Number(moment(getTime?.[0]?.created_at_utc)?.format("HH")) % 6 === 0 &&
     setTimeout(async () => {
-      if (
-        Number(moment(getTime?.[0]?.created_at_utc)?.format("HH")) % 6 === 0 &&
-        Number(moment(getTime?.[0]?.created_at_utc)?.format("mm")) === 0
-      ) {
+      if (Number(moment(getTime?.[0]?.created_at_utc)?.format("mm")) === 0) {
         await callTronAPISecond(time_to_Tron, time);
       } else {
         await getBlockDetails(time, getTime?.[0]?.block_id, time_to_Tron);
