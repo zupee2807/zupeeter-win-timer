@@ -3,7 +3,7 @@ const { queryDb } = require("../helper/adminHelper");
 exports.sendGaziyabadAmountToTheAdmin = async (io) => {
   try {
     const data = await queryDb(
-      "SELECT `number`,`amount` FROM `satta_bet_log` ORDER BY `amount` ASC;;",
+      "SELECT `number`,`amount` FROM `satta_bet_log` ORDER BY `amount` ASC;",
       []
     );
     io.emit("oneminsattagaziyabadamount", JSON.stringify(data || ""));
@@ -14,7 +14,7 @@ exports.sendGaziyabadAmountToTheAdmin = async (io) => {
 exports.sendFaridabadAmountToTheAdmin = async (io) => {
   try {
     const data = await queryDb(
-      "SELECT `number`,`amount` FROM `satta_bet_log_01` ORDER BY `amount` ASC;;",
+      "SELECT `number`,`amount` FROM `satta_bet_log_01` ORDER BY `amount` ASC;",
       []
     );
     io.emit("oneminsattafaridabadamount", JSON.stringify(data || ""));
@@ -25,7 +25,7 @@ exports.sendFaridabadAmountToTheAdmin = async (io) => {
 exports.sendGaliAmountToTheAdmin = async (io) => {
   try {
     const data = await queryDb(
-      "SELECT `number`,`amount` FROM `satta_bet_log_02` ORDER BY `amount` ASC;;",
+      "SELECT `number`,`amount` FROM `satta_bet_log_02` ORDER BY `amount` ASC;",
       []
     );
     io.emit("oneminsattagaliamount", JSON.stringify(data || ""));
@@ -36,7 +36,7 @@ exports.sendGaliAmountToTheAdmin = async (io) => {
 exports.sendDisawarAmountToTheAdmin = async (io) => {
   try {
     const data = await queryDb(
-      "SELECT `number`,`amount` FROM `satta_bet_log_03` ORDER BY `amount` ASC;;",
+      "SELECT `number`,`amount` FROM `satta_bet_log_03` ORDER BY `amount` ASC;",
       []
     );
     io.emit("oneminsattadisawaramount", JSON.stringify(data || ""));

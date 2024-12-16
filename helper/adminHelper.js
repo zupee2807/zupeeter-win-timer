@@ -4,6 +4,8 @@ var sql = require("../config/db.config");
 var sql5star = require("../config/db.config.5starxxx");
 // const path = require("path");
 const CryptoJS = require("crypto-js");
+const sequelize = require("../config/seq.config");
+const sequelize5star = require("../config/seq.config.5star");
 
 module.exports = {
   deCryptData: (data) => {
@@ -246,7 +248,7 @@ module.exports = {
     return ans;
   },
 
-  queryDb: function (query, param) {
+  queryDb2: function (query, param) {
     return new Promise((resolve, reject) => {
       sql.query(query, param, (err, result) => {
         if (err) {
@@ -257,7 +259,21 @@ module.exports = {
       });
     });
   },
-  queryDb5Star: function (query, param) {
+  queryDb: function (query, param) {
+    return new Promise((resolve, reject) => {
+      sequelize
+        .query(query, {
+          replacements: param,
+        })
+        .then((res) => {
+          return resolve(res?.[0]);
+        })
+        .catch((e) => {
+          return console.log(e);
+        });
+    });
+  },
+  queryDb5Star2: function (query, param) {
     return new Promise((resolve, reject) => {
       sql5star.query(query, param, (err, result) => {
         if (err) {
@@ -266,6 +282,20 @@ module.exports = {
         }
         resolve(result);
       });
+    });
+  },
+  queryDb5Star: function (query, param) {
+    return new Promise((resolve, reject) => {
+      sequelize5star
+        .query(query, {
+          replacements: param,
+        })
+        .then((res) => {
+          return resolve(res?.[0]);
+        })
+        .catch((e) => {
+          return console.log(e);
+        });
     });
   },
 };
